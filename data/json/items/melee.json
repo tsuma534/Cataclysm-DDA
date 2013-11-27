@@ -430,7 +430,7 @@
     "cutting": 0,
     "to_hit": -6
   },
-  
+
   {
     "type":"GENERIC",
     "id": "reinforced_glass_pane",
@@ -599,6 +599,22 @@
 
   {
     "type":"GENERIC",
+    "id": "waffleiron",
+    "symbol": ")",
+    "color": "dark_gray",
+    "name": "waffle iron",
+    "description": "A waffle iron. For making waffles.",
+    "price": 50,
+    "material": "iron",
+    "weight": 2628,
+    "volume": 4,
+    "bashing": 10,
+    "cutting": 0,
+    "to_hit": 2
+  },
+
+  {
+    "type":"GENERIC",
     "id": "teapot",
     "symbol": ")",
     "color": "dark_gray",
@@ -692,6 +708,22 @@
     "bashing": 14,
     "cutting": 0,
     "to_hit": -8
+  },
+
+  {
+    "type":"GENERIC",
+    "id": "silver",
+    "symbol": "/",
+    "color": "gray",
+    "name": "silver bar",
+    "description": "A large bar of silver. Before the cataclysm, this would've been worth quite a bit; now its value is greatly diminished.",
+    "price": 1000,
+    "material": "silver",
+    "weight": 4825,
+    "volume": 2,
+    "bashing": 10,
+    "cutting": 0,
+    "to_hit": -1
   },
 
   {
@@ -1096,6 +1128,22 @@
 
   {
     "type":"GENERIC",
+    "id": "broken_manhack",
+    "symbol": ",",
+    "color": "green",
+    "name": "broken manhack",
+    "description": "A broken manhack. Much less threatening now that it lies limp on solid ground. Could be gutted for parts.",
+    "price": 300,
+    "material": ["steel", "plastic"],
+    "weight": 300,
+    "volume": 1,
+    "bashing": 6,
+    "cutting": 6,
+    "to_hit": -3
+  },
+
+  {
+    "type":"GENERIC",
     "id": "fan",
     "symbol": ",",
     "color": "light_gray",
@@ -1353,7 +1401,7 @@
     "to_hit": -1
   },
 
-  { 
+  {
     "type":"GENERIC",
     "id":"rock",
     "symbol": "*",
@@ -1419,7 +1467,7 @@
     "cutting": 0,
     "to_hit": 5
   },
-  { 
+  {
     "type":"GENERIC",
     "id":"fertilizer",
     "symbol": "*",
@@ -1434,7 +1482,7 @@
     "cutting": 0,
     "to_hit": 0
   },
-  { 
+  {
     "type":"GENERIC",
     "id": "syringe",
     "symbol": ",",
@@ -1594,6 +1642,22 @@
     },
     {
         "type":"GENERIC",
+        "id" : "warhammer",
+        "name" : "war hammer",
+        "description" : "A medieval hammer made for battle. Its odd shape and balance make it an excellent weapon, but an ineffective tool.",
+        "weight" : 1231,
+        "to_hit" : 1,
+        "color" : "brown",
+        "symbol" : "/",
+        "material" : ["wood", "steel"],
+        "techniques" : ["BRUTAL"],
+        "volume" : 5,
+        "bashing" : 30,
+        "cutting" : 0,
+        "price" : 160
+    },
+    {
+        "type":"GENERIC",
         "id" : "nailboard",
         "name" : "nail board",
         "description" : "A long piece of wood with several nails through one end; essentially a simple mace. Makes a great melee weapon.",
@@ -1626,13 +1690,13 @@
         "flags" : ["STAB"],
         "price" : 160
     },
-    { 
+    {
     "type":"GENERIC",
     "id": "knuckle_nail",
     "symbol" : "]",
     "color": "brown",
     "name": "nail knuckles",
-    "description": "A pair of knuckles consisting of two small squares of wood with several nails coming through them. Usefull in nasty street fights .",
+    "description": "A pair of knuckles consisting of two small squares of wood with several nails coming through them. Useful in nasty street fights.",
     "material": "wood",
     "price": 0,
     "volume": 1,
@@ -1646,7 +1710,7 @@
         "type":"GENERIC",
         "id" : "homewrecker",
         "name" : "homewrecker",
-        "description" : "A long peice of wood with several chunks of steel firmly tied to it. The resulting weapon is unwieldy and slow but very heavy hitting.",
+        "description" : "A long piece of wood with several chunks of steel firmly tied to it. The resulting weapon is unwieldy and slow but very heavy hitting.",
         "weight" : 3024,
         "to_hit" : -3,
         "color" : "brown",
@@ -1680,14 +1744,14 @@
         "id" : "pipe",
         "name" : "pipe",
         "description" : "A steel pipe, makes a good melee weapon. Useful in a few crafting recipes.",
-        "weight" : 762,
-        "to_hit" : 3,
+        "weight" : 1262,
+        "to_hit" : 1,
         "color" : "dark_gray",
         "symbol" : "/",
         "material" : ["steel", "null"],
         "techniques" : ["WBLOCK_1"],
         "volume" : 4,
-        "bashing" : 16,
+        "bashing" : 12,
         "cutting" : 0,
         "price" : 75
     },
@@ -1924,6 +1988,23 @@
     },
     {
         "type":"GENERIC",
+        "id" : "javelin_iron",
+        "name" : "iron javelin",
+        "description" : "An iron-tipped wooden throwing spear. The grip area has also be carved and covered for better grip.",
+        "weight" : 960,
+        "to_hit" : 2,
+        "color" : "light_gray",
+        "symbol" : "/",
+        "material" : ["wood", "iron"],
+        "techniques" : ["WBLOCK_1", "RAPID"],
+        "volume" : 4,
+        "bashing" : 5,
+        "cutting" : 15,
+        "flags" : ["SPEAR"],
+        "price" : 90
+    },
+    {
+        "type":"GENERIC",
         "id" : "poppy_flower",
         "name" : "poppy flower",
         "description" : "A poppy stalk with some petals.",
@@ -2083,7 +2164,7 @@
     "to_hit": -6
   },
   { "type":"GENERIC",
- "id": "knuckle_steel",
+    "id": "knuckle_steel",
     "symbol" : "3",
     "color": "dark_gray",
     "name": "steel knuckles",
@@ -2099,7 +2180,7 @@
   },
 
   { "type":"GENERIC",
- "id": "knuckle_katar",
+    "id": "knuckle_katar",
     "symbol" : "!",
     "color": "dark_gray",
     "name": "razorbar katar",
@@ -2111,11 +2192,11 @@
     "bashing": 0,
     "cutting": 16,
     "to_hit": 2,
-    "flags" : ["UNARMED_WEAPON"],
+    "flags" : ["UNARMED_WEAPON", "CHOP"],
     "techniques": ["WBLOCK_1"]
   },
   { "type":"GENERIC",
- "id": "cestus",
+    "id": "cestus",
     "symbol" : "3",
     "color": "light_gray",
     "name": "cestus",
@@ -2130,7 +2211,7 @@
     "to_hit": 0
   },
   { "type":"GENERIC",
- "id": "knuckle_brass",
+    "id": "knuckle_brass",
     "symbol" : "3",
     "color": "yellow",
     "name": "brass knuckles",
@@ -2273,7 +2354,7 @@
     "type":"GENERIC",
     "id" : "cu_pipe",
     "name" : "copper tubing",
-    "description" : "A copper tube, too thin to be much use ad a melee weapon, but will do if nothing else is available. Useful in a few crafting recipes.",
+    "description" : "A copper tube, too thin to be much use as a melee weapon, but will do if nothing else is available. Useful in a few crafting recipes.",
     "weight" : 345,
     "to_hit" : -1,
     "color" : "light_red",

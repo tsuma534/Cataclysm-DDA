@@ -27,6 +27,8 @@
 # Compile localization files for specified languages
 #  make LANGUAGES="<lang_id_1>[ lang_id_2][ ...]"
 #  (for example: make LANGUAGES="zh_CN zh_TW" for Chinese)
+# Enable lua debug support
+#  make LUA=1
 
 # comment these to toggle them as one sees fit.
 # DEBUG is best turned on if you plan to debug in gdb -- please do!
@@ -61,8 +63,11 @@ TARGET = cataclysm
 TILESTARGET = cataclysm-tiles
 W32TILESTARGET = cataclysm-tiles.exe
 W32TARGET = cataclysm.exe
+CHKJSON_BIN = chkjson
 BINDIST_DIR = bindist
 BUILD_DIR = $(CURDIR)
+SRC_DIR = src
+LUA_DIR = lua
 LOCALIZE = 1
 
 # tiles object directories are because gcc gets confused
@@ -156,6 +161,7 @@ endif
 
 # Global settings for Windows targets
 ifeq ($(TARGETSYSTEM),WINDOWS)
+  CHKJSON_BIN = chkjson.exe
   TARGET = $(W32TARGET)
   BINDIST = $(W32BINDIST)
   BINDIST_CMD = $(W32BINDIST_CMD)
@@ -166,6 +172,26 @@ ifeq ($(TARGETSYSTEM),WINDOWS)
   endif
   W32FLAGS += -Wl,-stack,12000000,-subsystem,windows
   RFLAGS = -J rc -O coff
+endif
+
+ifdef LUA
+  ifeq ($(TARGETSYSTEM),WINDOWS)
+    # Windows expects to have lua unpacked at a specific location
+    LDFLAGS += -llua
+  else
+    # On unix-like systems, use pkg-config to find lua
+    LDFLAGS += $(shell pkg-config --silence-errors --libs lua5.1)
+    CXXFLAGS += $(shell pkg-config --silence-errors --cflags lua5.1)
+    LDFLAGS += $(shell pkg-config --silence-errors --libs lua-5.1)
+    CXXFLAGS += $(shell pkg-config --silence-errors --cflags lua-5.1)
+    LDFLAGS += $(shell pkg-config --silence-errors --libs lua)
+    CXXFLAGS += $(shell pkg-config --silence-errors --cflags lua)
+  endif
+
+  CXXFLAGS += -DLUA
+  LUA_DEPENDENCIES = $(LUA_DIR)/catabindings.cpp
+  BINDIST_EXTRAS  += $(LUA_DIR)/autoexec.lua
+  BINDIST_EXTRAS  += $(LUA_DIR)/class_definitions.lua
 endif
 
 ifdef TILES
@@ -248,12 +274,12 @@ ifeq ($(TARGETSYSTEM),LINUX)
   BINDIST_EXTRAS += cataclysm-launcher
 endif
 
-SOURCES = $(wildcard *.cpp)
-HEADERS = $(wildcard *.h)
-_OBJS = $(SOURCES:.cpp=.o)
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+HEADERS = $(wildcard $(SRC_DIR)/*.h)
+_OBJS = $(SOURCES:$(SRC_DIR)/%.cpp=%.o)
 ifeq ($(TARGETSYSTEM),WINDOWS)
-  RSRC = $(wildcard *.rc)
-  _OBJS += $(RSRC:.rc=.o)
+  RSRC = $(wildcard $(SRC_DIR)/*.rc)
+  _OBJS += $(RSRC:$(SRC_DIR)/%.rc=%.o)
 endif
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
@@ -279,8 +305,8 @@ $(TARGET): $(ODIR) $(DDIR) $(OBJS)
 version:
 	@( VERSION_STRING=$(VERSION) ; \
             [ -e ".git" ] && GITVERSION=$$( git describe --tags --always --dirty --match "[0-9]*.[0-9]*" ) && VERSION_STRING=$$GITVERSION ; \
-            [ -e "version.h" ] && OLDVERSION=$$(grep VERSION version.h|cut -d '"' -f2) ; \
-            if [ "x$$VERSION_STRING" != "x$$OLDVERSION" ]; then echo "#define VERSION \"$$VERSION_STRING\"" | tee version.h ; fi \
+            [ -e "$(SRC_DIR)/version.h" ] && OLDVERSION=$$(grep VERSION $(SRC_DIR)/version.h|cut -d '"' -f2) ; \
+            if [ "x$$VERSION_STRING" != "x$$OLDVERSION" ]; then echo "#define VERSION \"$$VERSION_STRING\"" | tee $(SRC_DIR)/version.h ; fi \
          )
 
 $(ODIR):
@@ -289,25 +315,37 @@ $(ODIR):
 $(DDIR):
 	@mkdir $(DDIR)
 
-$(ODIR)/%.o: %.cpp
+$(ODIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(DEFINES) $(CXXFLAGS) -c $< -o $@
 
-$(ODIR)/%.o: %.rc
+$(ODIR)/%.o: $(SRC_DIR)/%.rc
 	$(RC) $(RFLAGS) $< -o $@
 
-$(ODIR)/SDLMain.o: SDLMain.m
+$(ODIR)/SDLMain.o: $(SRC_DIR)/SDLMain.m
 	$(CC) -c $(OSX_INC) $< -o $@
 
 version.cpp: version
 
+$(LUA_DIR)/catabindings.cpp: $(LUA_DIR)/class_definitions.lua $(LUA_DIR)/generate_bindings.lua
+	cd $(LUA_DIR) && lua generate_bindings.lua
+
+$(SRC_DIR)/catalua.cpp: $(LUA_DEPENDENCIES)
+
 localization:
 	lang/compile_mo.sh $(LANGUAGES)
+
+$(CHKJSON_BIN): src/chkjson/chkjson.cpp src/json.cpp
+	$(CXX) -Isrc/chkjson -Isrc src/chkjson/chkjson.cpp src/json.cpp -o $(CHKJSON_BIN)
+
+json-check: $(CHKJSON_BIN)
+	./$(CHKJSON_BIN)
 
 clean: clean-tests
 	rm -rf $(TARGET) $(TILESTARGET) $(W32TILESTARGET) $(W32TARGET)
 	rm -rf $(ODIR) $(W32ODIR) $(W32ODIRTILES)
 	rm -rf $(BINDIST) $(W32BINDIST) $(BINDIST_DIR)
-	rm -f version.h
+	rm -f $(SRC_DIR)/version.h $(LUA_DIR)/catabindings.cpp
+	rm -f $(CHKJSON_BIN)
 
 distclean:
 	rm -rf $(BINDIST_DIR)
@@ -344,5 +382,5 @@ clean-tests:
 
 .PHONY: tests check ctags etags clean-tests
 
--include $(SOURCES:%.cpp=$(DEPDIR)/%.P)
+-include $(SOURCES:$(SRC_DIR)/%.cpp=$(DEPDIR)/%.P)
 -include ${OBJS:.o=.d}
